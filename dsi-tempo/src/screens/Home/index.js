@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 
 import './styles.css'
-import { searchForCoordenates } from '../../api/get'
+import { searchForCoordenates } from '../../api/clima'
 import Simbolos from "../../components/simbolos";
+import { getDados } from "../../api/graficos";
+import { Line } from 'react-chartjs-2';
+import { registerables, Chart } from "chart.js";
+
+Chart.register(...registerables);
 
 
 export default function Home() {
     const [cidade, setCidade] = useState('');
     const [tempo, setTempo] = useState([]);
+    const [grafico, setGrafico] = useState('');
 
-
+    useEffect(() => {
+        setGrafico('');
+    }, [tempo]);
+    
     return (
         <div>
             <h1 className="tempoTitulo">VER O TEMPO</h1>
@@ -24,9 +33,9 @@ export default function Home() {
                     onClick={async () => cidade ? setTempo(await searchForCoordenates(cidade)) : {}}>Ver o tempo</button>
             </div>
 
-            {tempo[0] &&
+            {tempo.list && tempo.list[0] &&
                 <>
-                    {tempo[0].main &&
+                    {tempo.list[0].main &&
                         <div className="tempoLista">
                             <table>
                                 <tr>
@@ -38,7 +47,7 @@ export default function Home() {
                                     <td className="tempoInfo">Umidade</td>
                                     <td colSpan={2} className="tempoInfo">Hora e Data</td>
                                 </tr>
-                                {tempo.filter((e) => moment(e.dt_txt).isBetween(moment().subtract(), moment().add(3, 'days'), 'days', '[)')).map((e) => {
+                                {tempo.list.filter((e) => moment(e.dt_txt).isBetween(moment().subtract(), moment().add(3, 'days'), 'days', '[)')).map((e) => {
                                     return (
                                         <tr className="text-left">
                                             <Simbolos
@@ -84,9 +93,37 @@ export default function Home() {
                             </table>
                         </div>
                     }
-                    {!tempo[0].main &&
+                    {!tempo.list[0].main &&
                         <h2 className="tempoTitulo">{tempo}</h2>
                     }
+                    <button
+                        className="tempoButton"
+                        onClick={async () => setGrafico(await getDados(tempo.city.name))}>Gerar Gráfico da Cidade</button>
+                </>
+            }
+            {grafico &&
+                <>
+
+                    <Line
+                        datasetIdKey='id'
+                        data={{
+                            labels: grafico.map((e) => moment(e.data).format('DD/MM/YY')),
+                            datasets: [
+                                {
+                                    id: 1,
+                                    label: 'Temperatura',
+                                    data: grafico.map((e) => e.temperatura),
+                                    backgroundColor: "rgba(255, 0, 0, 1)"
+                                },
+                                {
+                                    id: 2,
+                                    label: 'Umidade',
+                                    data: grafico.map((e) => e.umidade),
+                                    backgroundColor: "rgba(0, 255, 0, 1)"
+                                },
+                            ],
+                        }}
+                    />
                 </>
             }
         </div>

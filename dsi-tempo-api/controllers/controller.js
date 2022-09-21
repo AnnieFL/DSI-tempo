@@ -23,13 +23,19 @@ export const getDadosLog = async(req,res) =>{;
 
 export const  saveDadosLog = async (req,res) => {
    
-    const movieInfo = {title: req.body.title, overview:req.body.overview};
-    console.log(movieInfo);
+    const dadosInfo = {
+        data: req.body.data, // 
+        temperatura: req.body.temperatura,
+        cidade: req.body.cidade,
+        sensacaoTermica: req.body.sensacaoTermica,
+        umidade: req.body.umidade,
+        tempo: req.body.tempo
+};
     try{
-        const dbs = movieInfoModel.db;
+        const dbs = dadosLogModel.db;
         const coll = dbs.collection("dadoscollection");
 
-        const rest = await coll.insertOne(movieInfo);
+        const rest = await coll.insertOne(dadosInfo);
         
         res.status(200).json({message_success:"Data saved successfully"});
 

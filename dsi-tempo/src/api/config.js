@@ -4,6 +4,6 @@ const API_WEATHER = "https://api.openweathermap.org/data/2.5/forecast";
 const DEFAULT_COUNTRY = "BR";
 const DEFAULT_LANG = "pt";
 const DEFAULT_UNIT = "metric";
-const API_MONGO = "localhost:5000"
+const API_MONGO = "http://localhost:5000"
 
 export {API_KEY, API_GEO, API_WEATHER, DEFAULT_COUNTRY, DEFAULT_LANG, DEFAULT_UNIT, API_MONGO};

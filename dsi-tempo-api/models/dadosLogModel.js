@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const dadosLog = new Schema({
-  data:    String, // 
+  data:    String, 
   temperatura: Number,
   cidade: String,
   sensacaoTermica: Number,
